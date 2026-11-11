@@ -1,0 +1,13 @@
+# Local build environments and generated artifacts
+.build-venv/
+build/
+dist/
+release/
+__pycache__/
+*.py[cod]
+*.exe
+*.spec
+
+# Audio is bundled locally, not stored in this repository
+Audio Clips/*
+!Audio Clips/.gitkeep

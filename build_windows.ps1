@@ -8,6 +8,22 @@ $releaseFolder = Join-Path $releaseRoot $releaseName
 $archive = Join-Path $releaseRoot "$releaseName.zip"
 $distFolder = Join-Path $PSScriptRoot 'dist\Chaos Loss Aversion'
 
+# Repair accidental nested asset folders created by copying a folder into an existing folder.
+# Never overwrite existing destination files; leave source files in place.
+foreach ($folder in @('Images', 'Audio Clips')) {
+    $nested = Join-Path $folder $folder
+    if (Test-Path -LiteralPath $nested -PathType Container) {
+        Write-Host "Found nested asset folder: $nested. Copying missing files into $folder."
+        Get-ChildItem -LiteralPath $nested -Recurse -File | ForEach-Object {
+            $relative = $_.FullName.Substring((Resolve-Path -LiteralPath $nested).Path.Length).TrimStart('\')
+            $target = Join-Path $folder $relative
+            $parent = Split-Path -Parent $target
+            if (-not (Test-Path -LiteralPath $parent)) { New-Item -ItemType Directory -Path $parent -Force | Out-Null }
+            if (-not (Test-Path -LiteralPath $target)) { Copy-Item -LiteralPath $_.FullName -Destination $target }
+        }
+    }
+}
+
 $required = @('main.py', 'requirements.txt', 'README.txt', 'Images\Chaos Orb.ico', 'Images\Chaos Loss Aversion Logo.png', 'Images\Tier Twolongs Banner.png')
 foreach ($item in $required) {
     if (-not (Test-Path -LiteralPath $item)) { throw "Missing build asset: $item. Import the complete production Images folder before building." }

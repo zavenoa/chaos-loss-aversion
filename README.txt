@@ -1,4 +1,4 @@
-CHAOS LOSS AVERSION v1.1
+CHAOS LOSS AVERSION v1.2
 =======================
 Windows 10/11 (64-bit)
 
@@ -15,11 +15,13 @@ When CLA detects a match, it updates the visual indicator and plays a randomly s
 HOW IT WORKS
 ------------
 1. CALIBRATE
-Use the guided calibration process to:
-  - Draw a box around the center item slot in your Currency Tab.
-  - Confirm the detected slot boundaries.
-  - Capture a negative sample (an item that does not match your search).
-  - Capture a positive sample (an item that matches your search).
+Click Calibrate. Instructions appear in the CLA window; the game keeps focus the whole time.
+  - Hover just outside the UPPER-LEFT corner of the center slot border and press F9.
+  - Hover just outside the LOWER-RIGHT corner and press F9. CLA finds the exact border.
+  - Confirm the detected slot (Yes / No in the CLA window).
+  - Capture a negative sample (an item that does not match your search) with F9.
+  - Capture a positive sample (an item that matches your search) with F9.
+  - Press Esc or click Cancel Calibration at any step to cancel. Your previous calibration is kept.
 
 Calibration is saved between sessions. However, recalibration is required if your resolution, display mode, or monitored slot position changes.
 

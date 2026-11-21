@@ -25,7 +25,7 @@ CLA monitors a small calibrated area of your screen. It does **not** perform cra
 1. Download an official Windows release from the [Releases page](https://github.com/tiertwolongs/chaos-loss-aversion/releases), when available.
 2. Extract the release package and run the application.
 3. Open *Path of Exile 2* and navigate to the Currency Tab.
-4. Use CLA's guided calibration to select the center item slot, confirm its boundaries, and capture both a nonmatching and a matching example.
+4. Click **Calibrate** and follow the instructions in the CLA window: hover the slot's upper-left and lower-right corners pressing **F9** each time, confirm the detected slot, then capture a nonmatching and a matching example with **F9**. **Esc** cancels at any step.
 5. Enter your desired search in the game's stash search field, then press **F8** to begin monitoring.
 
 Calibration works in **Windowed** and **Borderless Windowed** modes. If you play in Fullscreen, calibrate in Borderless Windowed first. Recalibrate when your resolution, display mode, or monitored slot position changes.
@@ -75,6 +75,29 @@ CLA is not affiliated with or endorsed by Grinding Gear Games.
 *We put the mid in pyramid.*
 
 
-## Development build (v1.1)
+## Development (v1.2)
 
-Run `build_windows.ps1` on Windows with Python 3.12. This builds a portable `--onedir` ZIP in `release/CLA_1.1.zip`. The entire `Images` directory from production v1.0 must be present before building; the script fails if essential assets are missing. Keep the `_internal` directory beside the executable. Test the build with Microsoft Defender and validate calibration/hotkeys before promoting to production.
+| Path | Purpose |
+| --- | --- |
+| `main.py` | Entry point |
+| `cla/detection.py` | Calibration signature, slot-border detection, per-frame classifier |
+| `cla/monitor.py` | dxcam capture thread with click-to-clear match latch |
+| `cla/calibration.py` | Non-blocking calibration state machine |
+| `cla/capture.py` | One-shot calibration capture (worker thread) |
+| `cla/hotkeys.py` | Edge-triggered, modifier-agnostic global hotkeys |
+| `cla/winapi.py` | Read-only cursor/button queries. CLA never sends input. |
+| `cla/ui/` | Qt window, settings dialog, widgets |
+| `tests/` | pytest suite; `test_cla_contains_no_input_injection` guards the no-input promise |
+
+Test locally on Windows:
+
+```powershell
+git clone --branch dev/cla-1.2 https://github.com/zavenoa/chaos-loss-aversion "F:\CLA-dev"
+Set-Location "F:\CLA-dev"
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt -r requirements-dev.txt
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe main.py
+```
+
+Build with `powershell -ExecutionPolicy Bypass -File .\build_windows.ps1`. It produces a portable `--onedir` ZIP in `release/CLA_1.2.zip`. The full production `Images` folder must be present; audio clips are optional and never committed. Keep `_internal` beside the executable. Test with Microsoft Defender and validate calibration/hotkeys before promoting to production.

@@ -11,3 +11,6 @@ __pycache__/
 # Audio is bundled locally, not stored in this repository
 Audio Clips/*
 !Audio Clips/.gitkeep
+
+.venv/
+.pytest_cache/

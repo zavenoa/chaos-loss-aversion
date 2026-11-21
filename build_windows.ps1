@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
-$version = '1.1'
+$version = '1.2'
 $releaseName = "CLA_$version"
 $releaseRoot = Join-Path $PSScriptRoot 'release'
 $releaseFolder = Join-Path $releaseRoot $releaseName
@@ -24,7 +24,10 @@ foreach ($folder in @('Images', 'Audio Clips')) {
     }
 }
 
-$required = @('main.py', 'requirements.txt', 'README.txt', 'Images\Chaos Orb.ico', 'Images\Chaos Loss Aversion Logo.png', 'Images\Tier Twolongs Banner.png')
+# Audio is optional and never committed; PyInstaller needs the folder to exist.
+if (-not (Test-Path -LiteralPath 'Audio Clips')) { New-Item -ItemType Directory -Path 'Audio Clips' | Out-Null }
+
+$required = @('main.py', 'cla\__init__.py', 'cla\ui\app.py', 'requirements.txt', 'README.txt', 'Images\Chaos Orb.ico', 'Images\Chaos Loss Aversion Logo.png', 'Images\Tier Twolongs Banner.png')
 foreach ($item in $required) {
     if (-not (Test-Path -LiteralPath $item)) { throw "Missing build asset: $item. Import the complete production Images folder before building." }
 }

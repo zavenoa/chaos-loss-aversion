@@ -131,3 +131,9 @@ def test_shutdown_releases_everything(app):
     m.shutdown()
     assert not m.session.active
     assert not any(m.hotkeys.bound(n) for n in ('toggle', 'capture', 'overlay', 'cal_cancel'))
+
+
+def test_app_icon_and_taskbar_identity(app):
+    import cla.ui.app as appmod
+    assert appmod.APP_USER_MODEL_ID == 'TierTwolongs.ChaosLossAversion'
+    assert appmod.app_icon() is not None

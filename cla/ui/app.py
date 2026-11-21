@@ -70,7 +70,7 @@ class Main(QMainWindow):
         self.audio = QAudioOutput(self)
         self.player.setAudioOutput(self.audio)
         self.setWindowTitle(f'Chaos Loss Aversion | Version {VERSION}')
-        self.setWindowIcon(QIcon(str(IMAGES / 'Chaos Orb.png')))
+        self.setWindowIcon(app_icon())
         self.resize(900, 960)
         self.setMinimumSize(730, 780)
         self.build_ui()
@@ -491,9 +491,35 @@ class Main(QMainWindow):
         QApplication.instance().quit()
 
 
+APP_USER_MODEL_ID = 'TierTwolongs.ChaosLossAversion'
+
+
+def app_icon() -> QIcon:
+    """Multi-size .ico for the taskbar/title bar; PNG only as a fallback."""
+    ico = IMAGES / 'Chaos Orb.ico'
+    return QIcon(str(ico if ico.exists() else IMAGES / 'Chaos Orb.png'))
+
+
+def _set_app_user_model_id():
+    """Give the process its own taskbar identity.
+
+    Without this, running from source groups the window under python.exe and
+    Windows shows the Python icon instead of the Chaos Orb. Must run before
+    any window is created.
+    """
+    if sys.platform != 'win32':
+        return
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(APP_USER_MODEL_ID)
+    except Exception:
+        pass
+
+
 def run():
+    _set_app_user_model_id()
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon(str(IMAGES / 'Chaos Orb.png')))
+    app.setWindowIcon(app_icon())
     app.setQuitOnLastWindowClosed(True)
     window = Main()
     app.aboutToQuit.connect(window.shutdown)

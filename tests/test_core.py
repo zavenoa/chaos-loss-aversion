@@ -137,9 +137,15 @@ def test_signature_properties_on_noisy_border(seed):
 
 def test_signature_faster_than_legacy():
     neg, pos = _border_pair(1, 300, 300)
-    t0 = time.perf_counter(); legacy_signature.signature(neg, pos); legacy = time.perf_counter() - t0
-    t0 = time.perf_counter(); signature(neg, pos); new = time.perf_counter() - t0
-    assert new < legacy
+
+    def best(fn, n=5):
+        times = []
+        for _ in range(n):
+            t0 = time.perf_counter()
+            fn(neg, pos)
+            times.append(time.perf_counter() - t0)
+        return min(times)
+    assert best(signature) < best(legacy_signature.signature)
 
 
 def test_detector_classifies():

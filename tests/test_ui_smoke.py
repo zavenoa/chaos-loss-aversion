@@ -42,6 +42,9 @@ def app(tmp_path, monkeypatch):
     importlib.reload(cla.ui.widgets)
     importlib.reload(cla.ui.settings)
     importlib.reload(appmod)
+    # Deterministic captures here; the threaded path is covered in test_calibration.py.
+    from cla.calibration import SyncExecutor
+    monkeypatch.setattr(appmod, 'QtExecutor', lambda parent=None: SyncExecutor())
     main = appmod.Main()
     ns = type('NS', (), {})()
     ns.main, ns.kb, ns.cursor, ns.frames, ns.cfg = main, kb, cursor, frames, cfg

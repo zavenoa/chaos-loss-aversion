@@ -495,9 +495,22 @@ APP_USER_MODEL_ID = 'TierTwolongs.ChaosLossAversion'
 
 
 def app_icon() -> QIcon:
-    """Multi-size .ico for the taskbar/title bar; PNG only as a fallback."""
-    ico = IMAGES / 'Chaos Orb.ico'
-    return QIcon(str(ico if ico.exists() else IMAGES / 'Chaos Orb.png'))
+    """Window/taskbar icon from the 600 px PNG (Qt scales it per size).
+
+    Not the .ico: every image in Chaos Orb.ico is PNG-compressed, which
+    Windows Explorer reads (exe icon) but Qt's ICO reader does not, giving a
+    blank taskbar icon. The .ico is only tried if the PNG can't be loaded.
+    """
+    for name in ('Chaos Orb.png', 'Chaos Orb.ico'):
+        path = IMAGES / name
+        if path.exists():
+            icon = QIcon(str(path))
+            if not icon.isNull() and icon.availableSizes() != []:
+                return icon
+            pix = QPixmap(str(path))
+            if not pix.isNull():
+                return QIcon(pix)
+    return QIcon()
 
 
 def _set_app_user_model_id():
